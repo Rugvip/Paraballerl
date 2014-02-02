@@ -9,12 +9,13 @@ spawn() ->
 new() ->
     random:seed(now()),
     timer:send_interval(?UPDATE_TIME, update),
+    Angle = random:uniform() * math:pi() * 2.0,
     State = #ball_state{
         x = random:uniform() - 0.5,
         y = random:uniform() - 0.5,
-        vx = (random:uniform() - 0.5) * 0.01,
-        vy = (random:uniform() - 0.5) * 0.01,
-        radius = (random:uniform() + 0.5) * 0.1
+        vx = math:cos(Angle) * (random:uniform() + 0.5),
+        vy = math:sin(Angle) * (random:uniform() + 0.5),
+        radius = (random:uniform() + 0.5) * 20
     },
     ?STATE_SERVER ! {new_ball, self(), State},
     loop(State),

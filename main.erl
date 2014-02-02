@@ -19,7 +19,7 @@ init() ->
 
 config(Modules) ->
     wx:new(),
-    Frame = wxFrame:new(wx:null(), ?wxID_ANY, "OpenGL Test", [{pos, {100, 100}}, {size, {600, 400}}]),
+    Frame = wxFrame:new(wx:null(), ?wxID_ANY, "OpenGL Test", [{pos, {100, 100}}, {size, {1024, 720}}]),
 
     wxWindow:connect(Frame, close_window),
 
