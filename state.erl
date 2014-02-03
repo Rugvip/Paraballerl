@@ -1,4 +1,4 @@
--module(stateserver).
+-module(state).
 -export([config/1, start/1, init/1]).
 -include("paraballerl.hrl").
 

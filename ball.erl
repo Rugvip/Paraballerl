@@ -1,5 +1,5 @@
 -module(ball).
--export([spawn/0, new/0]).
+-export([spawn/0, new/0, loop/1]).
 -include("paraballerl.hrl").
 -define(UPDATE_TIME, 20).
 
@@ -18,8 +18,7 @@ new() ->
         radius = (random:uniform() + 0.5) * 20
     },
     ?STATE_SERVER ! {new_ball, self(), State},
-    loop(State),
-    ok.
+    loop(State).
 
 next(State) ->
     ?STATE_SERVER ! {ball, self(), State},
@@ -29,6 +28,7 @@ next(State) ->
 
 loop(State) ->
     receive
+        upgrade -> ?MODULE:loop(State);
         update -> next(tick(State));
         {collision, NewState} -> loop(NewState)
     after 1000 ->

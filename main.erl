@@ -9,8 +9,8 @@ start() ->
     spawn(?MODULE, init, []).
 
 init() ->
-    Config = config([renderer, stateserver, physics]),
-    stateserver:start(Config),
+    Config = config([render, state, physics]),
+    state:start(Config),
     wxWindow:raise(Config#config.frame),
     wxWindow:show(Config#config.frame),
     loop(Config),
@@ -44,7 +44,7 @@ loop(#config{frame = Frame} = Config) ->
                 top = H / 2.0
             }},
             physics:start(NewConfig),
-            renderer:start(NewConfig),
+            render:start(NewConfig),
             loop(NewConfig);
         Other -> io:format("Msg: ~p~n", [Other]), loop(Config)
     end.
