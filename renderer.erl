@@ -24,7 +24,9 @@ config(#config{frame = Frame} = Config) ->
     Config#config{canvas = Canvas, gl = #gl_state{}}.
 
 
-init(#config{canvas = Canvas, env = Env} = Config) ->
+init(#config{canvas = Canvas, env = Env, space = #space{
+        left = Left, right = Right, bottom = Bottom, top = Top
+    }} = Config) ->
     case lists:member(?RENDERER, registered()) of
         true -> unregister(?RENDERER);
         _ -> ok
@@ -34,10 +36,10 @@ init(#config{canvas = Canvas, env = Env} = Config) ->
     wxGLCanvas:setCurrent(Canvas),
 
     NewConfig = create_ball_list(Config),
-    gl:viewport(0, 0, 1024, 720),
+    gl:viewport(0, 0, round(Right - Left), round(Top - Bottom)),
     gl:matrixMode(?GL_PROJECTION),
     gl:loadIdentity(),
-    gl:ortho(-512.0, 512.0, -360.0, 360.0, 0.0, 1.0),
+    gl:ortho(Left, Right, Bottom, Top, 0.0, 1.0),
     gl:clearColor(1.0, 1.0, 1.0, 1.0),
     loop(NewConfig),
     ok.
@@ -62,7 +64,7 @@ create_ball_list(Config) ->
     gl:'begin'(?GL_TRIANGLE_FAN),
     lists:foreach(fun(A) ->
         gl:vertex2f(math:cos(A), math:sin(A))
-    end, [math:pi() * X / 10.0 || X <- lists:seq(0, 20)]),
+    end, [math:pi() * X / 20.0 || X <- lists:seq(0, 40)]),
     gl:'end'(),
     gl:endList(),
     Config#config{gl = #gl_state{ball_list = List}}.
