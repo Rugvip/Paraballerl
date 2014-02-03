@@ -23,13 +23,14 @@ new() ->
 
 next(State) ->
     ?STATE_SERVER ! {ball, self(), State},
+    ?PHYSICS_SERVER ! {ball, self(), State},
     loop(State).
 
 
 loop(State) ->
     receive
         update -> next(tick(State));
-        {collision, {wall, Side}} -> next(collide_wall(Side, State))
+        {collision, NewState} -> loop(NewState)
     after 1000 ->
         io:format("DAFUQ?~n")
     end.
@@ -39,8 +40,3 @@ tick(#ball_state{x = X, y = Y, vx = Vx, vy = Vy} = State) ->
         x = X + Vx,
         y = Y + Vy
     }.
-
-collide_wall(left, #ball_state{vx = Vx} = State) -> State#ball_state{vx = abs(Vx)};
-collide_wall(right, #ball_state{vx = Vx} = State) -> State#ball_state{vx = -abs(Vx)};
-collide_wall(top, #ball_state{vy = Vy} = State) -> State#ball_state{vy = -abs(Vy)};
-collide_wall(bottom, #ball_state{vy = Vy} = State) -> State#ball_state{vy = abs(Vy)}.
